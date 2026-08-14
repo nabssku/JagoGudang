@@ -5,7 +5,8 @@ export const stockService = {
   getMovements: async (): Promise<StockMovement[]> => {
     try {
       const res = await api.get('/stock-movements');
-      return res.data.data || res.data;
+      const data = res.data?.data ?? res.data;
+      return Array.isArray(data) ? data : defaultStockMovements;
     } catch {
       return defaultStockMovements;
     }
@@ -19,7 +20,7 @@ export const stockService = {
   }): Promise<StockMovement> => {
     try {
       const res = await api.post('/stock-movements', data);
-      return res.data.data || res.data;
+      return res.data?.data ?? res.data;
     } catch {
       const newMovement: StockMovement = {
         id: 'mov-' + Date.now(),
@@ -39,7 +40,7 @@ export const stockService = {
   submitOpname: async (data: Omit<StockOpname, 'id' | 'created_at'>): Promise<StockOpname> => {
     try {
       const res = await api.post('/stock-opnames', data);
-      return res.data.data || res.data;
+      return res.data?.data ?? res.data;
     } catch {
       return {
         ...data,

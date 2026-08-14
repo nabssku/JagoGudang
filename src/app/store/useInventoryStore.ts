@@ -30,27 +30,36 @@ export const useInventoryStore = create<InventoryState>((set) => ({
   stockMovements: [],
   isLoading: false,
 
-  setIngredients: (ingredients) => set({ ingredients }),
-  addIngredient: (item) => set((state) => ({ ingredients: [item, ...state.ingredients] })),
+  setIngredients: (ingredients) =>
+    set({ ingredients: Array.isArray(ingredients) ? ingredients : [] }),
+  addIngredient: (item) =>
+    set((state) => ({ ingredients: [item, ...(Array.isArray(state.ingredients) ? state.ingredients : [])] })),
   updateIngredient: (id, updated) =>
     set((state) => ({
-      ingredients: state.ingredients.map((item) => (item.id === id ? { ...item, ...updated } : item)),
+      ingredients: (Array.isArray(state.ingredients) ? state.ingredients : []).map((item) =>
+        item.id === id ? { ...item, ...updated } : item
+      ),
     })),
   deleteIngredient: (id) =>
     set((state) => ({
-      ingredients: state.ingredients.filter((item) => item.id !== id),
+      ingredients: (Array.isArray(state.ingredients) ? state.ingredients : []).filter((item) => item.id !== id),
     })),
 
-  setSuppliers: (suppliers) => set({ suppliers }),
-  addSupplier: (supplier) => set((state) => ({ suppliers: [supplier, ...state.suppliers] })),
+  setSuppliers: (suppliers) => set({ suppliers: Array.isArray(suppliers) ? suppliers : [] }),
+  addSupplier: (supplier) =>
+    set((state) => ({ suppliers: [supplier, ...(Array.isArray(state.suppliers) ? state.suppliers : [])] })),
 
-  setPurchaseOrders: (purchaseOrders) => set({ purchaseOrders }),
-  addPurchaseOrder: (order) => set((state) => ({ purchaseOrders: [order, ...state.purchaseOrders] })),
+  setPurchaseOrders: (purchaseOrders) =>
+    set({ purchaseOrders: Array.isArray(purchaseOrders) ? purchaseOrders : [] }),
+  addPurchaseOrder: (order) =>
+    set((state) => ({ purchaseOrders: [order, ...(Array.isArray(state.purchaseOrders) ? state.purchaseOrders : [])] })),
 
-  setRecipes: (recipes) => set({ recipes }),
+  setRecipes: (recipes) => set({ recipes: Array.isArray(recipes) ? recipes : [] }),
 
-  setStockMovements: (stockMovements) => set({ stockMovements }),
-  addStockMovement: (movement) => set((state) => ({ stockMovements: [movement, ...state.stockMovements] })),
+  setStockMovements: (stockMovements) =>
+    set({ stockMovements: Array.isArray(stockMovements) ? stockMovements : [] }),
+  addStockMovement: (movement) =>
+    set((state) => ({ stockMovements: [movement, ...(Array.isArray(state.stockMovements) ? state.stockMovements : [])] })),
 
   setIsLoading: (isLoading) => set({ isLoading }),
 }));

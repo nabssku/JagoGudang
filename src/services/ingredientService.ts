@@ -5,9 +5,9 @@ export const ingredientService = {
   getAll: async (): Promise<Ingredient[]> => {
     try {
       const res = await api.get('/ingredients');
-      return res.data.data || res.data;
+      const data = res.data?.data ?? res.data;
+      return Array.isArray(data) ? data : defaultIngredients;
     } catch {
-      // Fallback mock initial state if backend endpoint is unavailable or empty
       return defaultIngredients;
     }
   },
@@ -15,7 +15,7 @@ export const ingredientService = {
   create: async (data: Omit<Ingredient, 'id' | 'created_at'>): Promise<Ingredient> => {
     try {
       const res = await api.post('/ingredients', data);
-      return res.data.data || res.data;
+      return res.data?.data ?? res.data;
     } catch {
       const newItem: Ingredient = {
         ...data,
@@ -29,7 +29,7 @@ export const ingredientService = {
   update: async (id: string, data: Partial<Ingredient>): Promise<Ingredient> => {
     try {
       const res = await api.put(`/ingredients/${id}`, data);
-      return res.data.data || res.data;
+      return res.data?.data ?? res.data;
     } catch {
       return { id, ...data } as Ingredient;
     }

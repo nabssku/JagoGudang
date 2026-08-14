@@ -5,7 +5,8 @@ export const supplierService = {
   getAll: async (): Promise<Supplier[]> => {
     try {
       const res = await api.get('/suppliers');
-      return res.data.data || res.data;
+      const data = res.data?.data ?? res.data;
+      return Array.isArray(data) ? data : defaultSuppliers;
     } catch {
       return defaultSuppliers;
     }
@@ -14,7 +15,7 @@ export const supplierService = {
   create: async (data: Omit<Supplier, 'id' | 'created_at'>): Promise<Supplier> => {
     try {
       const res = await api.post('/suppliers', data);
-      return res.data.data || res.data;
+      return res.data?.data ?? res.data;
     } catch {
       return {
         ...data,

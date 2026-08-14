@@ -5,7 +5,8 @@ export const purchaseOrderService = {
   getAll: async (): Promise<PurchaseOrder[]> => {
     try {
       const res = await api.get('/purchase-orders');
-      return res.data.data || res.data;
+      const data = res.data?.data ?? res.data;
+      return Array.isArray(data) ? data : defaultPurchaseOrders;
     } catch {
       return defaultPurchaseOrders;
     }
@@ -15,7 +16,7 @@ export const purchaseOrderService = {
     const poNumber = `PO-${Date.now().toString().slice(-6)}`;
     try {
       const res = await api.post('/purchase-orders', { ...data, po_number: poNumber });
-      return res.data.data || res.data;
+      return res.data?.data ?? res.data;
     } catch {
       return {
         ...data,
@@ -29,7 +30,7 @@ export const purchaseOrderService = {
   updateStatus: async (id: string, status: PurchaseOrder['status']): Promise<PurchaseOrder> => {
     try {
       const res = await api.patch(`/purchase-orders/${id}/status`, { status });
-      return res.data.data || res.data;
+      return res.data?.data ?? res.data;
     } catch {
       return { id, status } as any;
     }
