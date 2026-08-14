@@ -1,13 +1,16 @@
 import { create } from 'zustand';
-import type { Ingredient, Supplier, PurchaseOrder, Recipe, StockMovement } from '../../types';
+import type { Ingredient, Product, Supplier, PurchaseOrder, Recipe, StockMovement } from '../../types';
 
 interface InventoryState {
+  products: Product[];
   ingredients: Ingredient[];
   suppliers: Supplier[];
   purchaseOrders: PurchaseOrder[];
   recipes: Recipe[];
   stockMovements: StockMovement[];
   isLoading: boolean;
+  setProducts: (products: Product[]) => void;
+  updateProductStock: (id: string, newStock: number) => void;
   setIngredients: (items: Ingredient[]) => void;
   addIngredient: (item: Ingredient) => void;
   updateIngredient: (id: string, item: Partial<Ingredient>) => void;
@@ -23,12 +26,22 @@ interface InventoryState {
 }
 
 export const useInventoryStore = create<InventoryState>((set) => ({
+  products: [],
   ingredients: [],
   suppliers: [],
   purchaseOrders: [],
   recipes: [],
   stockMovements: [],
   isLoading: false,
+
+  setProducts: (products) =>
+    set({ products: Array.isArray(products) ? products : [] }),
+  updateProductStock: (id, newStock) =>
+    set((state) => ({
+      products: (Array.isArray(state.products) ? state.products : []).map((p) =>
+        p.id === id ? { ...p, stock: newStock } : p
+      ),
+    })),
 
   setIngredients: (ingredients) =>
     set({ ingredients: Array.isArray(ingredients) ? ingredients : [] }),

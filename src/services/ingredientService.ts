@@ -5,8 +5,14 @@ export const ingredientService = {
   getAll: async (): Promise<Ingredient[]> => {
     try {
       const res = await api.get('/ingredients');
-      const data = res.data?.data ?? res.data;
-      return Array.isArray(data) ? data : defaultIngredients;
+      const rawData = res.data?.data ?? res.data;
+      if (Array.isArray(rawData)) {
+        return rawData;
+      }
+      if (rawData && Array.isArray(rawData.data)) {
+        return rawData.data;
+      }
+      return [];
     } catch {
       return defaultIngredients;
     }
@@ -76,28 +82,6 @@ export const defaultIngredients: Ingredient[] = [
     current_stock: 12,
     min_stock: 5,
     category: 'Sirup & Pemanis',
-    created_at: new Date().toISOString(),
-  },
-  {
-    id: 'ing-4',
-    tenant_id: 't-1',
-    name: 'Paper Cup 16oz',
-    unit: 'Pcs',
-    cost_per_unit: 800,
-    current_stock: 450,
-    min_stock: 100,
-    category: 'Kemasan',
-    created_at: new Date().toISOString(),
-  },
-  {
-    id: 'ing-5',
-    tenant_id: 't-1',
-    name: 'Sedotan Steril Eco',
-    unit: 'Pcs',
-    cost_per_unit: 150,
-    current_stock: 80,
-    min_stock: 200,
-    category: 'Kemasan',
     created_at: new Date().toISOString(),
   },
 ];

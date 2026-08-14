@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useAuthStore } from '../../app/store/useAuthStore';
 import { useInventoryStore } from '../../app/store/useInventoryStore';
+import { productService } from '../../services/productService';
 import { ingredientService } from '../../services/ingredientService';
 import { stockService } from '../../services/stockService';
 import { supplierService } from '../../services/supplierService';
@@ -13,20 +14,22 @@ interface AppInitializerProps {
 export const AppInitializer: React.FC<AppInitializerProps> = ({ children }) => {
   const checkAuth = useAuthStore((state) => state.checkAuth);
   const isInitializing = useAuthStore((state) => state.isInitializing);
-  const { setIngredients, setStockMovements, setSuppliers, setPurchaseOrders, setIsLoading } = useInventoryStore();
+  const { setProducts, setIngredients, setStockMovements, setSuppliers, setPurchaseOrders, setIsLoading } = useInventoryStore();
 
   useEffect(() => {
     const init = async () => {
       await checkAuth();
       setIsLoading(true);
       try {
-        const [ingRes, movRes, supRes, poRes] = await Promise.allSettled([
+        const [prodRes, ingRes, movRes, supRes, poRes] = await Promise.allSettled([
+          productService.getAll(),
           ingredientService.getAll(),
           stockService.getMovements(),
           supplierService.getAll(),
           purchaseOrderService.getAll(),
         ]);
 
+        if (prodRes.status === 'fulfilled') setProducts(prodRes.value);
         if (ingRes.status === 'fulfilled') setIngredients(ingRes.value);
         if (movRes.status === 'fulfilled') setStockMovements(movRes.value);
         if (supRes.status === 'fulfilled') setSuppliers(supRes.value);
@@ -36,7 +39,7 @@ export const AppInitializer: React.FC<AppInitializerProps> = ({ children }) => {
       }
     };
     init();
-  }, [checkAuth, setIngredients, setStockMovements, setSuppliers, setPurchaseOrders, setIsLoading]);
+  }, [checkAuth, setProducts, setIngredients, setStockMovements, setSuppliers, setPurchaseOrders, setIsLoading]);
 
   if (isInitializing) {
     return (
